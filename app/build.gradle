@@ -41,6 +41,22 @@ android {
         kotlinCompilerExtensionVersion compose_version
         kotlinCompilerVersion '1.4.32'
     }
+
+    flavorDimensions "v"
+
+    productFlavors {
+        sit{
+            dimension "v"
+        }
+
+        uat{
+            dimension "v"
+        }
+
+        product{
+            dimension "v"
+        }
+    }
 }
 
 dependencies {
