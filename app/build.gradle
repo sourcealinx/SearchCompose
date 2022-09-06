@@ -45,18 +45,54 @@ android {
     flavorDimensions "v"
 
     productFlavors {
-        sit{
+        sit {
             dimension "v"
         }
 
-        uat{
+        uat {
             dimension "v"
         }
 
-        product{
+        product {
             dimension "v"
         }
     }
+
+    applicationVariants.all { variant ->
+        // 打包完成后复制到的目录
+        def outputFileDir = "${project.projectDir.absolutePath}/${variant.buildType.name}"
+        //确定输出文件名
+        def apkName = "app"
+        if (variant.flavorName == "sit") {
+            apkName = "${apkName}-sit-${variant.versionName}"
+        } else if (variant.flavorName == "uat") {
+            apkName = "${apkName}-uat-${variant.versionName}"
+        }
+        apkName = "${apkName}.apk"
+        variant.outputs.forEach {
+            it.outputFileName = apkName
+        }
+        // 打包完成后做的一些事,复制apk到指定文件夹,复制mapping等
+        variant.getAssembleProvider().get().doLast {
+            File out = new File(outputFileDir)
+            variant.outputs.forEach { file ->
+                copy {
+                    from file.outputFile
+                    into out
+                }
+            }
+//            if (variant.buildType.name.contains("release")) {
+//                copy {
+//                    from variant.getMappingFileProvider()
+//                    into out
+//                    rename {
+//                        String fileName -> "mapping-${variant.flavorName}-${variant.versionName}.txt"
+//                    }
+//                }
+//            }
+        }
+    }
+
 }
 
 dependencies {
